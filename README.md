@@ -22,6 +22,7 @@ For bug reports, comments and questions please use the [issue tracker](https://g
 * [spelling](https://github.com/ropensci/spelling) to identify gibberish in texts.
 * [RCurl](https://uribo.github.io/rpkg_showcase/web/RCurl.html) and [RJSONIO](https://github.com/duncantl/RJSONIO) to scrape articles with [diffbot](https://www.diffbot.com/).
 * [httr](https://github.com/r-lib/httr) to scrape articles with [scrapinghub](https://www.scrapinghub.com/).
+* [RColorBrewer](https://cran.r-project.org/package=RColorBrewer) and [ggwordcloud](https://github.com/lepennec/ggwordcloud) to visualize some statistics.
 
 ## Usage
 Please note: For legal reasons the repository cannot provide all data. Please [let us know](https://github.com/JonasRieger/corona100d/issues) if you feel that there is anything missing that we could add. 
