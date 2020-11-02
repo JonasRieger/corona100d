@@ -133,6 +133,6 @@ head(count2) # Genau die Haelfte der Quellen wird nur ein einziges Mal verlinkt
 tail(count2) # die am haeufigsten verlinkten Quellen:
 # 44450  54072  63032  76355 101978 217852 
 #     1      1      1      1      1      1 
-head(sort(count, decreasing = TRUE), 10) # leider koennen wir die Kurz-URLs nicht alle aufloesen. Das sind zu viele...
+head(sort(count, decreasing = TRUE), 10)
 # twitter      youtube      spiegel        focus          faz sueddeutsche         zeit         welt         bild   tagesschau 
 #  217852       101978        76355        63032        54072        44450        43550        43199        40179        28483 
