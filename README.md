@@ -25,5 +25,3 @@ For bug reports, comments and questions please use the [issue tracker](https://g
 
 ## Usage
 Please note: For legal reasons the repository cannot provide all data. Please [let us know](https://github.com/JonasRieger/corona100d/issues) if you feel that there is anything missing that we could add. 
-
-...
