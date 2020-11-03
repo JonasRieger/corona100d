@@ -2,6 +2,7 @@ library(data.table)
 library(RColorBrewer)
 #library(wordcloud)
 library(ggwordcloud)
+library(lubridate)
 
 obj = readRDS(file.path("data", "reducednodups20200706.rds"))
 obj = obj[obj$date > as.Date("2020-03-18") & obj$date < as.Date("2020-03-19")+100]
@@ -15,23 +16,23 @@ tab[, wday :=  wday(date)] # Sonntag = 1
 pdf("counts.pdf", height = 6, width = 10)
 par(mar = c(4.2,4.2,0.5,0.5))
 plot(tab$date, tab$count/1000, type = "h", ylim = c(0, max(tab$count/1000)),
-  xlab = "Date in 2020", ylab = "# Tweets (in thousands)")
+     xlab = "Date in 2020", ylab = "# Tweets (in thousands)")
 col = brewer.pal(8, "Dark2")[2:8]
 for(day in 1:7){
   points(tab[wday == day]$date, tab[wday == day]$count/1000,
-    col = col[day], pch = 20)
+         col = col[day], pch = 20)
 }
 legend("top", horiz = T, c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"),
-  col = col, pch = 20, bty = "n")
+       col = col, pch = 20, bty = "n")
 dev.off()
 
 
 # Hashtag-Wordclouds
 hashtags = lapply(tab$date,
-  function(x) tolower(unlist(strsplit(obj[date == x]$hashtags, " "))))
+                  function(x) tolower(unlist(strsplit(obj[date == x]$hashtags, " "))))
 levels = unique(unlist(lapply(hashtags, unique)))
 hashtagtab = do.call(cbind, lapply(hashtags,
-  function(x) table(factor(x, levels = levels))))
+                                   function(x) table(factor(x, levels = levels))))
 colnames(hashtagtab) = as.character(tab$date)
 rm(obj)
 
@@ -71,14 +72,16 @@ plot(tmp)
 id = freq > 5000
 tmp = ggwordcloud(words[id], sqrt(freq[id]))
 plot(tmp)
-
-if(FALSE){
-  for(i in 1:ncol(hashtagtab)){
-    freq = hashtagtab[,i]
-    id = freq > 100
-    tmp = ggwordcloud(words[id], freq[id])
-    plot(tmp)
-  }
-}
 dev.off()
 
+pdf("wordcloudsDays.pdf", height = 5, width = 12)
+set.seed(20201102)
+words = rownames(hashtagtab)
+for(i in 1:ncol(hashtagtab)){
+  freq = hashtagtab[,i]
+  id = freq >= sort(freq, decreasing = TRUE)[25]
+  tmp = ggwordcloud(words[id], freq[id]) +
+    ggtitle(paste0(wday(colnames(hashtagtab)[i], label = TRUE), ", ", colnames(hashtagtab)[i]))
+  plot(tmp)
+}
+dev.off()
