@@ -26,6 +26,6 @@ For bug reports, comments and questions please use the [issue tracker](https://g
 Please note: For legal reasons the repository cannot provide all data. Please [let us know](https://github.com/JonasRieger/corona100d/issues) if you feel that there is anything missing that we could add. 
 
 The numbered scripts describe the general workflow during data set creation. In the folder ``scraping_articles`` are the parsers for the article scrapers.
-The two ``txt`` files (``status_id.txt`` and ``status_id_Articles.txt``) specify the 3,699,623 status ids of the tweets in the base data set and the status ids of the filtered data set (tweets with links) on which an LDA was calculated (85,920 ids).
+The two ``txt`` files (``status_id.txt`` and ``status_id_Articles.txt``) specify the 3,699,623 status ids of the tweets in the base data set and the status ids of the filtered data set (tweets with links) on which a LDA was calculated (85,920 ids).
 
 The scripts ``corona100d.R`` and ``wordcloud.R`` give an first insight into the base dataset ``corona100d`` (see also ``wordclouds.pdf`` and ``counts.pdf``), while ``corona100dArticles.R`` contains code to fit LDAs. The necessary data to model the LDA are given by ``docs.rds`` and ``vocab.rds``; ``lda.R`` then shows code for a minimal evaluation of the LDA results
