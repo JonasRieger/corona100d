@@ -6,17 +6,15 @@ token = readRDS(".rtweet_token.rds")
 repeat({
   ##create timeobject##
   nextTimeScrape = Sys.time()
-  #if(minute(nextTimeScrape) > 29){
   hour(nextTimeScrape) = hour(nextTimeScrape) + 1
   minute(nextTimeScrape) = 30
   second(nextTimeScrape) = 0
-  #}
   time = Sys.time()
   ##download tweets##
   rt = try(search_tweets(
     "coronavirusde OR corona OR coronavirus OR covid19 OR covid OR pandemie OR epidemie OR virus OR SARSCoV2",
     n = 50000, lang = "de", include_rts = TRUE, token = token, retryonratelimit = TRUE))
-  ##repeat (max ) if failed##
+  ##repeat (max 3) if failed##
   trys = 1
   while(class(rt)[1] == "try-error" && trys < 3 && Sys.time() + 10*60 < nextTimeScrape){
     time = Sys.time()
