@@ -1,7 +1,11 @@
 # corona100d
-### Best Practices bei der Genese, Analyse und Publikation eines Open-Data-Korpus
+### German-language Twitter dataset of the first 100 days after Merkel addressed the coronavirus outbreak
 
-This repository provides the data and scripts related to the talk
+The repository provides the status IDs and associated scripts for creating a German-language Twitter dataset from 2020/03/19 until 2020/06/26. The data set will be continuously expanded. For a brief introduction to the dataset see
+
+* TBA.
+
+In addition, this repository provides the data and scripts related to the talk
 
 * von Nordheim, G. & Rieger, J. (2020). corona100d - Best practices in the creation process, analysis and publication of an open data corpus [corona100d – Best Practices bei der Genese, Analyse und Publikation eines Open-Data-Korpus]. [*SciCAR 2020*](https://sched.co/ejkZ).
 
@@ -25,7 +29,6 @@ For bug reports, comments and questions please use the [issue tracker](https://g
 ## Usage
 Please note: For legal reasons the repository cannot provide all data. Please [let us know](https://github.com/JonasRieger/corona100d/issues) if you feel that there is anything missing that we could add. 
 
-The numbered scripts describe the general workflow during data set creation. In the folder ``scraping_articles`` are the parsers for the article scrapers.
-The two ``txt`` files (``status_id.txt`` and ``status_id_Articles.txt``) specify the 3,699,623 status ids of the tweets in the base data set and the status ids of the filtered data set (tweets with links) on which a LDA was calculated (85,920 ids).
+The numbered scripts describe the general workflow during data set creation. The main folder contains all scripts relevant for the creation of the raw dataset. The ``scicar`` folder contains - consecutively numbered - additional scripts for creating a follow-up corpus from linked articles in the tweets. In the subfolder ``scraping_articles`` are the parsers for the article scrapers. The two ``txt`` files (``status_id.txt`` in the main folder and ``status_id_Articles.txt`` in ``scicar``) specify the 3,699,623 status ids of the tweets in the base data set and the status ids of the filtered data set (tweets with links) on which a LDA was calculated (85,920 ids).
 
-The scripts ``corona100d.R`` and ``wordcloud.R`` give an first insight into the base dataset ``corona100d`` (see also ``wordclouds.pdf`` and ``counts.pdf``), while ``corona100dArticles.R`` contains code to fit LDAs. The necessary data to model the LDA are given by ``docs.rds`` and ``vocab.rds``; ``lda.R`` then shows code for a minimal evaluation of the LDA results
+The scripts ``corona100d.R`` and ``wordcloud.R`` give an first insight into the base dataset ``corona100d`` (see also ``wordclouds.pdf`` and ``counts.pdf``), while ``corona100dArticles.R`` contains code to fit LDAs. The necessary data to model the LDA are given by ``docs.rds`` and ``vocab.rds``; ``lda.R`` then shows code for a minimal evaluation of the LDA results.
