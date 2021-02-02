@@ -32,6 +32,10 @@ saveRDS(obj, file = "corona100.rds")
 
 obj = readRDS(file = "corona100.rds")
 
+library(data.table)
+library(lubridate)
+library(ggplot2)
+
 length(unique(obj$status_id)) # number of unique tweets
 # [1] 3699623
 
@@ -42,33 +46,26 @@ count[1] # number of unique users with a single tweet in the dataset
 # [1] 180187
 count[2:10] # and so on...
 # [1] 57415 30920 20055 14393 10930  8417  7099  5736  4849
-count = table(as.numeric(table(obj$user_id)))
-tail(count) # the 6 most often appearing users in the dataset (4474 times, ...)
-# 4474 4490 5077 5194 5266 8151 
-ids = head(sort(table(obj$user_id), decreasing = TRUE), 10)
-rbindlist(lapply(names(ids), function(i){
-  tmp = obj[user_id == i, c("name", "screen_name")]
+ids = head(sort(table(obj$user_id), decreasing = TRUE), 13)
+tab = rbindlist(lapply(names(ids), function(i){
+  tmp = obj[user_id == i, .(name = name, screen_name = screen_name,
+                            url_cores = url_cores, favs = mean(favorite_count),
+                            rts = mean(retweet_count), quote = mean(is_quote),
+                            links = 1-mean(sapply(urls, is.null)),
+                            hashtags = mean(hashtags != ""))]
+  tab = table(unlist(tmp$url_cores))
+  tmp[, url_cores := NULL]
+  tmp[, fav_url := names(which.max(tab))]
+  tmp[, fav_url_ratio := max(tab/sum(tab))]
   unique(tmp[, N := .N])
 }))
-#                            name     screen_name    N
-#1:            Franz W.Winterberg    FWWinterberg 8151
-#2:                          WELT            welt 5266
-#3: Frankfurter Allgemeine gesamt         FAZ_NET 5194
-#4:           Deutschland Germany Deutschland_BRD 5077
-#5:      Alfred Hampp - Redakteur     AlfredHampp 4490
-#6:          FOCUS Online TopNews   FOCUS_TopNews 4474
-#7:                       Gnutiez         gnutiez 4141
-#8:                  Tagesspiegel    Tagesspiegel 3915
-#9:                Marco Herrmann   Kleeblatt1977 3838
-#10:             FOCUS Gesundheit focusgesundheit 3635
 
-
-table(obj$is_retweet) # no retweets
-#   FALSE 
-# 3699623 
-table(obj$is_quote) # few quotes
-#   FALSE    TRUE 
-# 3484669  214954 
+count = table(unlist(obj$url_cores))
+tab = rbind(tab,
+            obj[, .(name = "all", screen_name = "all", favs = mean(favorite_count),
+                    rts = mean(retweet_count), quote = mean(is_quote),
+                    links = 1-mean(sapply(urls, is.null)), hashtags = mean(hashtags != ""),
+                    fav_url = names(which.max(count)), fav_url_ratio = max(count/sum(count)), N = .N)])
 
 summary(obj$favorite_count)
 #   Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
@@ -84,7 +81,7 @@ summary(obj$retweet_count)
 #    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
 #  0.000    0.000    0.000    1.373    0.000 7592.000 
 count = table(obj$retweet_count)
-head(count) # almost 3 milltion tweets without retweet
+head(count) # almost 3 million tweets without retweet
 #       0       1       2       3       4       5 
 # 2849012  377547  149529   79690   50914   35171 
 tail(count) # maximal number of retweets is 7592
@@ -96,21 +93,47 @@ summary(as.numeric(count)) # there are at least 13863 tweets and at most 87577 t
 # 13863   22587   35707   36996   48623   87577 
 plot(count) # clear weekly seasonality
 
+Sys.setlocale("LC_ALL","English")
+dat = data.table(date = as.Date(names(count)), N = as.numeric(count))
+dat[, weekday := factor(weekdays(date), levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))]
+ggplot(dat) + aes(x = date, y = N) + geom_line() +
+  geom_line(aes(x = date, y  = N, col = weekday)) + ylim(c(0, max(dat$N))) +
+  xlab("Date") + ylab("Number of tweets") + labs(col = "Day of Week")
+
+library(ggwordcloud)
+
+mywordcloud = function(day = "2020-06-16", seed = 12){
+  hashtags = tolower(unlist(strsplit(obj[date == day]$hashtags, " ")))
+  secondary = hashtags[!hashtags %in% c("corona", "coronavirus", "coronakrise", "covid19", "covid_19",
+                                        "coronavirusde", "coronadeutschland", "coronavirusdeutschland",
+                                        "covid19deutschland", "covid2019de", "sarscov2", "covid_19de",
+                                        "covid", "viruscorona", "sars_cov_2", "covid__19", "covid19de",
+                                        "covid...19", "deutschland", "covid2019", "covidー19",
+                                        "covid<u+30fc>19")]
+  secondary = table(tosca::removeUmlauts(secondary))
+  top = sort(secondary, decreasing = TRUE)[35]
+  words = names(secondary)[secondary >= top]
+  freq = secondary[secondary >= top]
+  set.seed(seed)
+  ggwordcloud2(data.table(word = words, freq = (as.numeric(freq))^0.5), shuffle = F)
+}
+# coronawarnapp
+mywordcloud("2020-06-16") + ggtitle("2020/06/16 (Tuesday)")
+# toennies
+mywordcloud("2020-06-17") + ggtitle("2020/06/17 (Wednesday)")
+
+# time of day plot
+obj[, time_num := sapply(strsplit(time, ":"), function(x) sum(as.numeric(x) / c(1,60,60*60)))]
+ids_time = head(sort(table(obj$user_id), decreasing = TRUE), 5)
+ggplot() + 
+  geom_density(data = obj, aes(x = time_num)) +
+  geom_density(data = obj[user_id %in% names(ids_time)],
+               aes(x = time_num,  col = screen_name)) +
+  xlab("Time of Day") + ylab("Density") + labs(col = "Top 5 User")
+
 table(obj$media_type) # there are a number of tweets with (multiple) photos
 #                              photo             photo photo       photo photo photo photo photo photo photo 
 #    3151128                  548259                     229                       5                       2
-
-sum(obj$hashtags != "") # number of tweets that used hashtags
-# [1] 1478733
-sum(obj$hashtags == "") # number of tweets that does not used hashtags
-# [1] 2220890
-
-secs = colSums(sapply(strsplit(obj$time, ":"), as.integer) * c(60*60, 60, 1))
-summary(secs/60/60)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 0.000   9.116  13.016  13.195  17.332  24.000
-hist(secs/60/60, xlab = "Stunde", ylab = "Häufigkeit", main = "")
-# in the night less tweets ...
 
 hist(obj$downloaded, breaks = 101)
 table(as.numeric(as.Date(obj$downloaded) - obj$date))
@@ -128,8 +151,14 @@ count2 = table(count)
 head(count2) # half of the sources is shared only once
 #     1     2     3     4     5     6 
 # 25611  8049  4076  2524  1749  1351 
-tail(count2)
-# 44450  54072  63032  76355 101978 217852 
-head(sort(count, decreasing = TRUE), 10) # most shared sources
-# twitter      youtube      spiegel        focus          faz sueddeutsche         zeit         welt         bild   tagesschau 
-#  217852       101978        76355        63032        54072        44450        43550        43199        40179        28483 
+ids = names(head(sort(count, decreasing = TRUE), 13)) # most shared sources
+
+tab = rbindlist(lapply(ids, function(i){
+  tmp = obj[sapply(url_cores, function(x) i %in% x), ]
+  count = table(tmp$user_id)
+  name_tmp = unique(tmp[user_id == names(which.max(count)), screen_name])
+  tmp = tmp[, .(source = i, N = .N,
+                unique_ids = length(names(count)),
+                fav_screen_name = name_tmp,
+                fav_id_ratio = max(count/sum(count)))]
+}))
