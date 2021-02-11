@@ -1,5 +1,5 @@
 # corona100d
-### German-language Twitter dataset of the first 100 days after Chancellor Merkel addressed the coronavirus outbreak in TV
+### German-language Twitter dataset of the first 100 days after Chancellor Merkel addressed the coronavirus outbreak on TV
 
 The repository provides the status IDs and associated scripts for creating a German-language Twitter dataset consisting of 3,699,623 tweets from 2020/03/19 until 2020/06/26. The data set will be continuously extended. For a brief introduction to the dataset see
 
