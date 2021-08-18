@@ -3,11 +3,11 @@
 
 The repository provides the status IDs and associated scripts for creating a German-language Twitter dataset consisting of 3,699,623 tweets from 2020/03/19 until 2020/06/26. The data set will be continuously extended. For a brief introduction to the dataset see
 
-* Rieger, J. & von Nordheim, G. (2021). corona100d - German-language Twitter dataset of the first 100 days after Chancellor Merkel addressed the coronavirus outbreak on TV. [*DoCMA Working Paper #4*](http://dx.doi.org/10.17877/DE290R-21911).
+* [Rieger, J. & von Nordheim, G. (2021).](http://dx.doi.org/10.17877/DE290R-21911) corona100d - German-language Twitter dataset of the first 100 days after Chancellor Merkel addressed the coronavirus outbreak on TV. *DoCMA Working Paper #4*.
 
 In addition, this repository provides the data and scripts related to the talk
 
-* von Nordheim, G. & Rieger, J. (2020). corona100d - Best practices in the creation process, analysis and publication of an open data corpus [corona100d – Best Practices bei der Genese, Analyse und Publikation eines Open-Data-Korpus]. [*SciCAR 2020*](https://sched.co/ejkZ).
+* [von Nordheim, G. & Rieger, J. (2020).](https://sched.co/ejkZ) corona100d - Best practices in the creation process, analysis and publication of an open data corpus [corona100d – Best Practices bei der Genese, Analyse und Publikation eines Open-Data-Korpus]. *SciCAR 2020*.
 
 For bug reports, comments and questions please use the [issue tracker](https://github.com/JonasRieger/corona100d/issues).
 
